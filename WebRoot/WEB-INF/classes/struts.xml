@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+<!-- 学生Action配置 -->
+<package name="StudentAction" namespace="/" extends="struts-default">
+  <!-- 实现学生的注册 -->
+  <action name="stuzhuce" class="studentAction" method="addStu">
+  
+     <result name="success">/pages/zhucesuccess.jsp</result>
+     <result name="error">/pages/zhuce.jsp</result>
+     
+  </action>
+  <!-- 实现作业的提交 -->
+   <action name="tijiao" class="studentAction" method="tijiao">
+  
+     <result name="success" type="redirect">/pages/zuoyesuccess.jsp</result>
+     
+  </action>
+  
+  <!-- 总登陆文件 -->
+  <action name="login" class="studentAction" method="login">
+      <result name="success" type="chain">slogin</result>
+      <result name="error" type="chain">telogin</result>
+      <result name="super" type="chain">Superlogin</result>
+   </action>
+<!--   这里class的名称是spring配置下id的名称      -->
+   <action name="findall" class="studentAction">
+      <result name="success">/pages/success.jsp</result>
+   </action>
+    <action name="slogin" class="studentAction" method="slogin">
+      <result name="success" type="redirect">/pages/success.jsp</result>
+      <result name="error" >/index.jsp</result>
+   </action>
+   
+       <action name="findhmbyname" class="studentAction" method="findallhbyname">
+      <result name="success" type="redirect">/pages/success.jsp</result>
+   </action>
+   
+       <action name="catDetail" class="studentAction" method="catDetail">
+      <result name="success" >/pages/detail.jsp</result>
+   </action>
+   
+   <!-- 查看自己的个人信息 -->
+   <action name="catmyinfo" class="studentAction"  method="catmyinfo">
+      <result name="success">/pages/info.jsp</result>
+   </action>
+   
+</package>
+<!-- 老师Action配置 -->
+<package name="TeacherAction"  namespace="/"  extends="StudentAction">
+  <action name="telogin" class="teacherAction" method="tlogin">
+  
+    <result name="success" type="redirect">/pages/teacher.jsp</result>
+    <result name="error">/index.jsp</result>
+  </action>
+  
+   <action name="TcatDetail" class="teacherAction" method="catDetail">
+      <result name="success" type="redirect">/pages/detail.jsp</result>
+   </action>
+   <action name="Tfindhmbyname" class="teacherAction" method="Tfindallhbyname">
+      <result name="success" type="redirect">/pages/teacher.jsp</result>
+   </action>
+   <action name="Tzhuce" class="teacherAction" method="zhuce">
+      <result name="success" >/pages/zhucesuccess.jsp</result>
+      <result name="error">/pages/teacherzhuce.jsp</result>
+   </action>
+   <!-- 老师修改作业 -->
+      <action name="fabuzuoye" class="teacherAction" method="fabuzuoye">
+      <result name="success" >/pages/fabuchenggong.jsp</result>
+   </action>
+     <!-- 老师发布作业 -->
+       <action name="tfabuzuoye" class="teacherAction" method="tfabuzuoye">
+      <result name="success" >/pages/tfabuchenggong.jsp</result>
+   </action>
+  <!-- TfinddetailS查询具体学生作业信息 --> 
+     <action name="TfinddetailS" class="teacherAction" method="TfinddetailS">
+      <result name="success" type="redirect">/pages/tdetail.jsp</result>
+   </action>
+   <!-- 老师查看自己的个人信息 -->
+<action name="tcatinfo" class="teacherAction"  method="tcatinfo">
+     <result name="success" type="redirect">/pages/tinfo.jsp</result>
+</action>
+</package>
+<!-- 配置超级用户 -->
+<package name="AdminAction" namespace="/"  extends="StudentAction">
+    <!-- 超级用户登录 -->
+    <action name="Superlogin" class="adminAction" method="superlogin">
+       <result name="success" type="redirect">/pages/superUser.jsp</result>
+       <result name="error">/index.jsp</result>
+    </action>
+    <!-- 管理作业 -->
+    <action name="glzy" class="adminAction" method="cxzy">
+    
+      <result name="success" type="redirect">/pages/hwinfo.jsp</result>
+    </action>
+    <!-- 跳转跟新作业 -->
+      <action name="upthw" class="adminAction" method="upthw">
+      <result name="success" >/pages/updatehw.jsp</result>
+    </action>
+    <!-- 更改作业 -->
+    <action name="updatehw" class="adminAction" method="updatehw">
+      <result name="success" type="chain">glzy</result>
+    </action>
+    <!-- 删除作业 -->
+      <action name="delhw" class="adminAction" method="delhw">
+      <result name="success" type="chain">glzy</result>
+    </action>
+    <!-- 管理学生 -->
+    <action name="glxs" class="adminAction" method="cxxs">
+      <result name="success" type="redirect">/pages/stinfo.jsp</result>
+    </action>
+    <!-- 跳转 -->
+    <action name="upstu" class="adminAction" method="upstu">
+      <result name="success" >/pages/updatest.jsp</result>
+    </action>
+    <!--upstu 更改学生信息 -->
+     <action name="upsture" class="adminAction" method="upsture">
+      <result name="success" type="chain">glxs</result>
+    </action>
+    <action name="delstu" class="adminAction" method="delstu">
+      <result name="success" type="chain">glxs</result>
+    </action>
+    <!-- 管理老师 -->
+     <action name="glls" class="adminAction" method="cxls">
+      <result name="success" type="redirect">/pages/tcinfo.jsp</result>
+    </action>
+    <!-- 跳转 -->
+    <action name="uptea" class="adminAction" method="uptea">
+      <result name="success" >/pages/updatetea.jsp</result>
+    </action>
+    <!--upstu 更改老师信息 -->
+     <action name="upteare" class="adminAction" method="upteare">
+      <result name="success" type="chain">glls</result>
+    </action>
+    <!-- 删除 -->
+    <action name="deltea" class="adminAction" method="deltea">
+      <result name="success" type="chain">glls</result>
+    </action>
+    
+    
+</package>
+
+</struts>

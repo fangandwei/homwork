@@ -1,0 +1,92 @@
+ <beans xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans.xsd 
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx.xsd 
+http://www.springframework.org/schema/aop 
+http://www.springframework.org/schema/aop/spring-aop.xsd 
+http://www.springframework.org/schema/context    
+http://www.springframework.org/schema/context/spring-context.xsd" 
+xmlns:context="http://www.springframework.org/schema/context" 
+xmlns:tx="http://www.springframework.org/schema/tx" 
+xmlns:aop="http://www.springframework.org/schema/aop" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns="http://www.springframework.org/schema/beans">
+<!-- 配置数据源 -->
+<bean id="datasourse" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+<property name="jdbcUrl" value="jdbc:mysql:///test"></property>
+<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+<property name="user" value="root"></property>
+<property name="password" value="1234"></property>
+</bean>
+<!-- 配置工厂 造会话 Session-->
+<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+<property name="dataSource" ref="datasourse"></property>
+<property name="hibernateProperties">
+<props>
+<prop key="hibernate.format_sql">true</prop>
+<prop key="hibernate.show_sql">true</prop>
+</props>
+</property>
+<!-- 配置每个类单独的映射文件 classpath代表是在src路径下 -->
+
+<property name="mappingLocations" >
+    <list>
+       <value>classpath:*.hbm.xml</value>
+    </list>
+</property>
+</bean>
+<!-- 配置dao -->
+<bean id="studentdao" class="dao.StudentDao">
+   <!-- session工厂造会话 -->
+   <property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+<bean id="teacherDao" class="dao.TeacherDao">
+   <property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+<bean id="adminDao" class="dao.AdminDao">
+   <property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+
+<!-- 配置service -->
+<bean id ="studentservice" class="service.StudentService">
+  <property name="studenDao" ref="studentdao"></property>
+</bean>	
+<bean id="teacherService" class="service.TeacherService">
+  <property name="teacherDao" ref="teacherDao"></property>
+</bean>
+<bean id="adminService" class="service.AdminService">
+  <property name="adminDao" ref="adminDao"></property>
+</bean>
+
+<!-- 配置action -->
+<bean name="studentAction" class="action.StudentAction" scope="prototype">
+<property name="studentService" ref="studentservice"></property>
+</bean>
+<bean name="teacherAction" class="action.TeacherAction" scope="prototype">
+  <property name="teacherService" ref="teacherService"></property>
+</bean>
+
+<bean name="adminAction" class="action.AdminAction" scope="prototype">
+  <property name="adminService" ref="adminService"></property>
+</bean>
+
+
+<!-- 配置事务管理 -->
+<bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+<tx:advice id="txadvice" transaction-manager="txManager">
+<tx:attributes>
+<tx:method name="findAll"/>
+<tx:method name="findOne"/>
+<tx:method name="add"/>
+<tx:method name="delete"/>
+<tx:method name="update"/>
+<tx:method name="*"/>
+</tx:attributes>
+</tx:advice>
+<aop:config>
+<aop:advisor advice-ref="txadvice" pointcut="execution(* service..*.*(..))"/>
+
+</aop:config>
+</beans>
